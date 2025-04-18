@@ -1,0 +1,14 @@
+//- mixins/claim-info.pug - Reusable claim info component
+mixin claimInfo(data, currentPage)
+  .claim-info
+    if data.claimInfo && data.claimInfo.claimNumber
+      p Claim No. 
+        span#claimNumber= data.claimInfo.claimNumber
+    p Worker App ID: 
+      span#workerAppId= data.workerInfo ? data.workerInfo.workerAppId : data.claimInfo.workerAppId
+    p Submitted: 
+      span#submissionDate= data.workerInfo ? data.workerInfo.submissionDate : data.claimInfo.submissionDate
+    p.page-number Page 
+      span#currentPage= currentPage
+      |  of 
+      span#totalPages= data.workerInfo ? data.workerInfo.totalPages : data.claimInfo.totalPages

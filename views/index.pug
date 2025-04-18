@@ -1,0 +1,26 @@
+//- index.pug - Home page with links to forms
+extends layout
+
+block content
+  .container
+    h1 WCB Forms
+    
+    .form-links
+      a.form-link(href="/medical-expense")
+        .form-card(style="border-left-color: #3182ce;")
+          h2(style="color: #2b6cb0;") Medical & Travel Expense Request
+          p Submit your medical and travel expenses for reimbursement.
+      
+      a.form-link(href="/worker-progress")
+        .form-card(style="border-left-color: #38a169;")
+          h2(style="color: #2f855a;") Worker Progress Report
+          p Report on your recovery progress and return to work status.
+    
+    .data-controls
+      h3 Demo Controls
+      p These links demonstrate different data sets:
+      div(style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;")
+        a.page-btn(href="/medical-expense?dataset=small", style="background: linear-gradient(to bottom, #3182ce, #2b6cb0);") Medical Expense - Small Dataset
+        a.page-btn(href="/medical-expense?dataset=large", style="background: linear-gradient(to bottom, #38a169, #2f855a);") Medical Expense - Large Dataset
+        a.page-btn(href="/worker-progress", style="background: linear-gradient(to bottom, #e53e3e, #c53030);") Worker Progress - Default Dataset
+        a.page-btn(href="/worker-progress?random=true", style="background: linear-gradient(to bottom, #805ad5, #6b46c1);") Worker Progress - Random Dataset

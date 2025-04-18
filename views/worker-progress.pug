@@ -1,0 +1,438 @@
+//- worker-progress.pug - Worker Progress Report form
+extends layout
+
+block styles
+  link(rel="stylesheet", href="/css/worker-progress.css")
+
+//- Import mixins
+include mixins/form-header
+include mixins/claim-info
+include mixins/pagination
+include mixins/radio-option
+
+block content
+  .form-container
+    //- Header
+    +formHeader("Worker Progress Report")
+
+    //- Form Content
+    .form-content
+      //- Page 1 Content
+      #page1Content.page-content
+        +claimInfo(data, 1)
+
+        //- Recovery Section
+        .report-section
+          h2 Recovery
+          p
+            span#workerName= data.workerInfo.workerName
+            |  provided the following updates in relation to their claim:
+          
+          .recovery-date
+            p= data.recovery.date
+          
+          .recovery-status
+            p My return to work is going:
+            p.status-text#returnStatus= data.recovery.returnStatus
+
+        //- Return to Work Section
+        .report-section
+          h2 Return to Work
+          
+          .return-work-status
+            .status-group
+              +radioOption(
+                "returnStatus", 
+                "notReturned", 
+                "not returned", 
+                "I have not returned to work", 
+                data.returnToWork.status === "not returned", 
+                false
+              )
+            
+            .status-group
+              +radioOption(
+                "returnStatus", 
+                "returned", 
+                "returned", 
+                "I returned to work on:", 
+                data.returnToWork.status === "returned", 
+                false
+              )
+              input#returnDate.date-input(
+                type="date", 
+                value=data.returnToWork.returnDate, 
+                disabled=data.returnToWork.status !== "returned"
+              )
+            
+            .work-type-options
+              - const workTypes = ["full-regular", "full-reduced", "modified-regular", "modified-reduced", "other"]
+              - const workTypeLabels = ["Full duties, regular hours", "Full duties, reduced hours", "Modified duties, regular hours", "Modified duties, reduced hours", "Other:"]
+              
+              each type, index in workTypes
+                +radioOption(
+                  "workType", 
+                  type, 
+                  type, 
+                  workTypeLabels[index], 
+                  data.returnToWork.workType === type, 
+                  data.returnToWork.status !== "returned"
+                )
+                if type === "other"
+                  input.text-input(
+                    type="text", 
+                    disabled=data.returnToWork.status !== "returned" || data.returnToWork.workType !== "other", 
+                    value=data.returnToWork.otherWorkType
+                  )
+          
+          .expected-return
+            p I expect to return to work on: 
+              input#expectedReturnDate.date-input(
+                type="date", 
+                value=data.returnToWork.expectedReturnDate
+              )
+          
+          .return-concerns
+            p I have the following concerns about returning to work:
+            textarea#returnConcerns.textarea-input= data.returnToWork.concerns
+          
+          .employer-contact
+            p I was most recently in contact with: 
+              input#employerContact.text-input(
+                type="text", 
+                placeholder="Name of employer contact", 
+                value=data.returnToWork.employerContact
+              )
+              |  on 
+              input#contactDate.date-input(
+                type="date", 
+                value=data.returnToWork.contactDate
+              )
+
+      //- Page 2 Content
+      #page2Content.page-content(style="display: none;")
+        +claimInfo(data, 2)
+
+        //- Work Status Section
+        .report-section
+          .work-status
+            +radioOption(
+              "workStatus", 
+              "notMissed", 
+              "not missed", 
+              "I have not missed time from work", 
+              data.workStatus.status === "not missed", 
+              false
+            )
+            +radioOption(
+              "workStatus", 
+              "working", 
+              "working", 
+              "I am working:", 
+              data.workStatus.status === "working", 
+              false
+            )
+          
+          //- Pain Scale Section
+          .pain-scale
+            p I rate my current pain/discomfort on a scale of 1-10, where 1 is no pain and 10 is severe pain
+            .pain-scale-options
+              - for (let i = 1; i <= 10; i++)
+                +radioOption(
+                  "painScale", 
+                  `pain${i}`, 
+                  i, 
+                  i.toString(), 
+                  data.painScale === i, 
+                  false
+                )
+          
+          //- Medical Treatment Section
+          .medical-treatment
+            .treatment-status
+              +radioOption(
+                "treatmentStatus", 
+                "notContinuing", 
+                "not continuing", 
+                "I am not continuing to receive medical treatment for my workplace injury.", 
+                data.medicalTreatment.status === "not continuing", 
+                false
+              )
+              +radioOption(
+                "treatmentStatus", 
+                "continuing", 
+                "continuing", 
+                "I am continuing to receive medical treatment for my workplace injury from:", 
+                data.medicalTreatment.status === "continuing", 
+                false
+              )
+              input.text-input(
+                type="text", 
+                placeholder="Medical Provider Type", 
+                value=data.medicalTreatment.providerType, 
+                disabled=data.medicalTreatment.status !== "continuing"
+              )
+            
+            .last-treatment
+              p My last medical treatment was from 
+                input.date-input(
+                  type="date", 
+                  value=data.medicalTreatment.lastTreatmentDate
+                ) 
+                input.text-input(
+                  type="text", 
+                  placeholder="Medical Provider Name", 
+                  value=data.medicalTreatment.lastProviderName
+                )
+            
+            .next-treatment
+              p My next medical treatment is from 
+                input.date-input(
+                  type="date", 
+                  value=data.medicalTreatment.nextTreatmentDate
+                ) 
+                input.text-input(
+                  type="text", 
+                  placeholder="Medical Provider Name", 
+                  value=data.medicalTreatment.nextProviderName
+                )
+            
+            .treatment-frequency
+              p I am attending a Chiropractor or Physiotherapist 
+                input.text-input(
+                  type="text", 
+                  placeholder="Frequency", 
+                  value=data.medicalTreatment.frequency
+                )
+          
+          //- Medication Section
+          .medication
+            +radioOption(
+              "medicationStatus", 
+              "notTaking", 
+              "not taking", 
+              "I am not taking medication for my workplace injury.", 
+              data.medication.status === "not taking", 
+              false
+            )
+            +radioOption(
+              "medicationStatus", 
+              "taking", 
+              "taking", 
+              "I am taking medication for my workplace injury:", 
+              data.medication.status === "taking", 
+              false
+            )
+            input.text-input(
+              type="text", 
+              placeholder="Name of prescribed medication", 
+              value=data.medication.medicationName, 
+              disabled=data.medication.status !== "taking"
+            )
+
+      //- Page 3 Content
+      #page3Content.page-content(style="display: none;")
+        +claimInfo(data, 3)
+
+        //- Home Exercises Section
+        .report-section
+          .home-exercises
+            +radioOption(
+              "exerciseStatus", 
+              "notDoing", 
+              "not doing", 
+              "I am not doing home exercises for my workplace injury.", 
+              data.exercises.status === "not doing", 
+              false
+            )
+            +radioOption(
+              "exerciseStatus", 
+              "doing", 
+              "doing", 
+              "I am doing home exercises for my workplace injury.", 
+              data.exercises.status === "doing", 
+              false
+            )
+            
+            .exercise-list
+              p List the exercises you are doing:
+              textarea.textarea-input(
+                disabled=data.exercises.status !== "doing"
+              )= data.exercises.exerciseList
+          
+          //- Recovery Status Section
+          .recovery-status-section
+            +radioOption(
+              "recoveryStatus", 
+              "notRecovered", 
+              "not recovered", 
+              "I have not fully recovered from my workplace injury.", 
+              data.recoveryStatus.status === "not recovered", 
+              false
+            )
+            +radioOption(
+              "recoveryStatus", 
+              "recovered", 
+              "recovered", 
+              "I have fully recovered from my workplace injury.", 
+              data.recoveryStatus.status === "recovered", 
+              false
+            )
+            
+            .recovery-comments
+              p I have provided the following comments about my recovery:
+              textarea#recoveryComments.textarea-input= data.recoveryStatus.comments
+          
+          //- Additional Information Section
+          .additional-info
+            h2 Other Information
+            p I would like to provide the following additional information about my claim/injury:
+            textarea#additionalInfo.textarea-input= data.additionalInfo
+          
+          //- Certification Section
+          .certification
+            p I certify that the information given on this form is true, correct and complete to the best of my knowledge. I agree to notify the Workers Compensation Board of Manitoba (WCB) immediately once I return to any form of work and/or employment. I understand that it is an offence to knowingly make a false statement to the WCB. I also understand that it is an offence to withhold information from WCB which affects my entitlement to compensation (e.g., full or partial recovery from injury, ability to return to work, sources of additional income, etc.). I understand that refusing to co-operate with, or follow my treatment, may result in the WCB reducing or suspending my benefits.
+            
+            label.checkbox-container
+              input#certificationCheckbox(type="checkbox", checked, disabled)
+              span.checkmark
+              | I understand that the Privacy Notice applies to the personal information collected in this document.
+
+    //- Footer with pagination
+    +pagination(data.workerInfo.totalPages)
+
+  //- Data Controls for Demo
+  .data-controls
+    h3 Demo Controls
+    a.page-btn(href="/worker-progress") Default Dataset
+    a.page-btn(href="/worker-progress?random=true") Random Dataset
+
+block scripts
+  script.
+    document.addEventListener("DOMContentLoaded", () => {
+      // Set up pagination
+      const prevPageBtn = document.getElementById("prevPage");
+      const nextPageBtn = document.getElementById("nextPage");
+      const pageIndicator = document.getElementById("pageIndicator");
+      const page1Content = document.getElementById("page1Content");
+      const page2Content = document.getElementById("page2Content");
+      const page3Content = document.getElementById("page3Content");
+
+      let currentPage = 1;
+      const totalPages = #{data.workerInfo.totalPages};
+
+      // Update page display
+      function updatePageDisplay() {
+        document.getElementById("currentPage").textContent = currentPage;
+        pageIndicator.textContent = `Page ${currentPage} of ${totalPages}`;
+
+        if (currentPage === 1) {
+          page1Content.style.display = "block";
+          page2Content.style.display = "none";
+          page3Content.style.display = "none";
+          prevPageBtn.disabled = true;
+          nextPageBtn.disabled = false;
+        } else if (currentPage === 2) {
+          page1Content.style.display = "none";
+          page2Content.style.display = "block";
+          page3Content.style.display = "none";
+          prevPageBtn.disabled = false;
+          nextPageBtn.disabled = false;
+        } else {
+          page1Content.style.display = "none";
+          page2Content.style.display = "none";
+          page3Content.style.display = "block";
+          prevPageBtn.disabled = false;
+          nextPageBtn.disabled = true;
+        }
+      }
+
+      // Page navigation event listeners
+      prevPageBtn.addEventListener("click", () => {
+        if (currentPage > 1) {
+          currentPage--;
+          updatePageDisplay();
+        }
+      });
+
+      nextPageBtn.addEventListener("click", () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          updatePageDisplay();
+        }
+      });
+
+      // Form interaction event listeners
+      const returnedRadio = document.getElementById("returned");
+      const notReturnedRadio = document.getElementById("notReturned");
+      const returnDateInput = document.getElementById("returnDate");
+      const workTypeRadios = document.querySelectorAll('input[name="workType"]');
+
+      returnedRadio.addEventListener("change", function() {
+        if (this.checked) {
+          returnDateInput.disabled = false;
+          workTypeRadios.forEach(radio => {
+            radio.disabled = false;
+          });
+        }
+      });
+
+      notReturnedRadio.addEventListener("change", function() {
+        if (this.checked) {
+          returnDateInput.disabled = true;
+          returnDateInput.value = "";
+          workTypeRadios.forEach(radio => {
+            radio.disabled = true;
+            radio.checked = false;
+          });
+        }
+      });
+
+      // Treatment status radio buttons
+      const treatmentStatusRadios = document.querySelectorAll('input[name="treatmentStatus"]');
+      const treatmentTypeInput = document.querySelector(".treatment-status .text-input");
+
+      treatmentStatusRadios.forEach(radio => {
+        radio.addEventListener("change", function() {
+          if (this.value === "continuing") {
+            treatmentTypeInput.disabled = false;
+          } else {
+            treatmentTypeInput.disabled = true;
+            treatmentTypeInput.value = "";
+          }
+        });
+      });
+
+      // Medication status radio buttons
+      const medicationStatusRadios = document.querySelectorAll('input[name="medicationStatus"]');
+      const medicationNameInput = document.querySelector(".medication .text-input");
+
+      medicationStatusRadios.forEach(radio => {
+        radio.addEventListener("change", function() {
+          if (this.value === "taking") {
+            medicationNameInput.disabled = false;
+          } else {
+            medicationNameInput.disabled = true;
+            medicationNameInput.value = "";
+          }
+        });
+      });
+
+      // Exercise status radio buttons
+      const exerciseStatusRadios = document.querySelectorAll('input[name="exerciseStatus"]');
+      const exerciseListTextarea = document.querySelector(".exercise-list .textarea-input");
+
+      exerciseStatusRadios.forEach(radio => {
+        radio.addEventListener("change", function() {
+          if (this.value === "doing") {
+            exerciseListTextarea.disabled = false;
+          } else {
+            exerciseListTextarea.disabled = true;
+            exerciseListTextarea.value = "";
+          }
+        });
+      });
+
+      // Initial page display
+      updatePageDisplay();
+    });

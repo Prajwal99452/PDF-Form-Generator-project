@@ -1,0 +1,16 @@
+//- mixins/expense-table.pug - Reusable expense table component
+mixin expenseTable(id, headers, items)
+  table.expense-table(id=id)
+    thead
+      tr
+        each header in headers
+          th= header
+    tbody
+      if items && items.length > 0
+        each item in items
+          tr
+            each key in Object.keys(item)
+              td= item[key]
+      else
+        tr
+          td(colspan=headers.length) No data available

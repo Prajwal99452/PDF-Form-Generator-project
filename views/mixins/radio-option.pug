@@ -1,0 +1,6 @@
+//- mixins/radio-option.pug - Reusable radio option component
+mixin radioOption(name, id, value, label, checked, disabled)
+  label.radio-container
+    input(type="radio", name=name, id=id, value=value, checked=checked, disabled=disabled)
+    span.radio-checkmark
+    span.radio-label= label

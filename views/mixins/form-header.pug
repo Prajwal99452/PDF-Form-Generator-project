@@ -1,0 +1,13 @@
+//- mixins/form-header.pug - Reusable form header component
+mixin formHeader(title)
+  header.form-header
+    .logo-address
+      img.logo(src="https://www.iwh.on.ca/sites/iwh/files/styles/bootstrap_6_col_wide/public/wcbmanitoba_logo.png?h=3aaa30b7&itok=IHgQ4PBt", alt="WCB Logo")
+      .address
+        p 333 Broadway
+        p Winnipeg, MB R3C 4W3
+        p Phone: (204) 954-4321
+        p Toll Free: 1-855-954-4321
+        p wcb.mb.ca
+    .form-title
+      h1= title

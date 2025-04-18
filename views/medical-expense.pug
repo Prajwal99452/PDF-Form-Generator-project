@@ -1,0 +1,153 @@
+//- medical-expense.pug - Medical & Travel Expense Request form
+extends layout
+
+block styles
+  link(rel="stylesheet", href="/css/medical-expense.css")
+
+//- Import mixins
+include mixins/form-header
+include mixins/claim-info
+include mixins/pagination
+include mixins/expense-table
+
+block content
+  .form-container
+    //- Header
+    +formHeader("Medical & Travel Expense Request")
+
+    //- Form Content
+    .form-content
+      //- Page 1 Content
+      #page1Content.page-content
+        +claimInfo(data, 1)
+
+        .intro-text
+          p
+            span#workerName= data.claimInfo.workerName
+            |  requested reimbursement for the following medical and/or travel expenses:
+
+        //- Prescription Drugs Section
+        .expense-section
+          h2 Prescription Drugs
+          +expenseTable(
+            "prescriptionDrugsTable", 
+            ["Drug Name", "Prescription Date", "Date Purchased", "Healthcare Provider Name", "Paid Amount"],
+            data.prescriptionDrugs
+          )
+
+        //- Over-the-Counter Drugs Section
+        .expense-section
+          h2 Over-the-Counter Drugs
+          +expenseTable(
+            "otcDrugsTable", 
+            ["Drug Name", "Date Purchased", "Paid Amount", "Seller's Name", "Reason for Purchasing"],
+            data.otcDrugs
+          )
+
+        //- Medical Supplies Section
+        .expense-section
+          h2 Bandages, Braces or Other Medical Supplies
+          +expenseTable(
+            "medicalSuppliesTable", 
+            ["Item Purchased", "Date Purchased", "Was this Prescribed?", "Healthcare Provider Name", "Paid Amount", "Seller's Name"],
+            data.medicalSupplies
+          )
+
+        //- Parking Section
+        .expense-section
+          h2 Parking for Medical Appointments
+          +expenseTable(
+            "parkingTable", 
+            ["Appointment Date", "Address of Healthcare Provider/Medical Facility", "Paid Amount", "Meter Used?", "Meter Number"],
+            data.parking
+          )
+
+        //- Mileage Section
+        .expense-section
+          h2 Mileage to Medical Appointments
+          p.note The WCB will generally reimburse only those transportation costs which are in excess of costs that would be incurred by the worker while travelling to and from work.
+          +expenseTable(
+            "mileageTable", 
+            ["Appointment Date", "Address of Healthcare Provider/Medical Facility", "Address of Workplace", "Number of km (Round Trip)"],
+            data.mileage
+          )
+
+      //- Page 2 Content
+      #page2Content.page-content(style="display: none;")
+        +claimInfo(data, 2)
+
+        //- Bus or Taxi Section
+        .expense-section
+          h2 Bus or Taxi Fare for Medical Appointments*
+          p.note *Note: Pre-approval is required from your WCB representative to claim taxi fare(s).
+          +expenseTable(
+            "busOrTaxiTable", 
+            ["Appointment Date", "Address of Starting Point", "Address of Healthcare Provider/Medical Facility", "Bus or Taxi (indicate one)", "Total Fare Paid"],
+            data.busOrTaxi
+          )
+
+        //- Privacy Notice
+        .privacy-notice
+          label.checkbox-container
+            input(type="checkbox", id="privacyCheckbox", checked, disabled)
+            span.checkmark
+            | I understand that the Privacy Notice applies to the personal information collected in this document.
+
+    //- Footer with pagination
+    +pagination(data.claimInfo.totalPages)
+
+  //- Data Controls for Demo
+  .data-controls
+    h3 Demo Controls
+    a.page-btn(href="/medical-expense?dataset=small") Load Small Dataset
+    a.page-btn(href="/medical-expense?dataset=large") Load Large Dataset
+
+block scripts
+  script.
+    document.addEventListener("DOMContentLoaded", () => {
+      // Set up pagination
+      const prevPageBtn = document.getElementById("prevPage");
+      const nextPageBtn = document.getElementById("nextPage");
+      const pageIndicator = document.getElementById("pageIndicator");
+      const page1Content = document.getElementById("page1Content");
+      const page2Content = document.getElementById("page2Content");
+
+      let currentPage = 1;
+      const totalPages = #{data.claimInfo.totalPages};
+
+      // Update page display
+      function updatePageDisplay() {
+        document.getElementById("currentPage").textContent = currentPage;
+        pageIndicator.textContent = `Page ${currentPage} of ${totalPages}`;
+
+        if (currentPage === 1) {
+          page1Content.style.display = "block";
+          page2Content.style.display = "none";
+          prevPageBtn.disabled = true;
+          nextPageBtn.disabled = false;
+        } else {
+          page1Content.style.display = "none";
+          page2Content.style.display = "block";
+          prevPageBtn.disabled = false;
+          nextPageBtn.disabled = true;
+        }
+      }
+
+      // Page navigation event listeners
+      prevPageBtn.addEventListener("click", () => {
+        if (currentPage > 1) {
+          currentPage--;
+          updatePageDisplay();
+        }
+      });
+
+      nextPageBtn.addEventListener("click", () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          updatePageDisplay();
+        }
+      });
+
+      // Initial page display
+      updatePageDisplay();
+    });

@@ -1,0 +1,12 @@
+//- mixins/pagination.pug - Reusable pagination component
+mixin pagination(totalPages)
+  footer.form-footer
+    .pagination
+      button#prevPage.page-btn(disabled) Previous Page
+      span#pageIndicator Page 1 of #{totalPages}
+      button#nextPage.page-btn Next Page
+    
+    //- Add print button with more prominence
+    .print-controls(style="text-align: center; margin-top: 15px;")
+      button#printButton.page-btn(style="background: linear-gradient(to bottom, #38a169, #2f855a); font-size: 16px; padding: 12px 25px;")
+        | Print Form to PDF

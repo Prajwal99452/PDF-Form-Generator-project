@@ -1,0 +1,130 @@
+/* Specific styles for Medical & Travel Expense Request form */
+
+.intro-text {
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #2c5282;
+  background: linear-gradient(to right, #ebf8ff, #e6fffa);
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 4px solid #3182ce;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.privacy-notice {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  background: linear-gradient(to right, #e6fffa, #ebf8ff);
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #38b2ac;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.privacy-notice .checkbox-container {
+  color: #2c7a7b;
+}
+
+/* Color variations for different expense sections */
+.expense-section:nth-child(odd) {
+  background: linear-gradient(to bottom right, #f0f9ff, #ffffff);
+  border-left: 4px solid #3182ce;
+}
+
+.expense-section:nth-child(even) {
+  background: linear-gradient(to bottom right, #f0fff4, #ffffff);
+  border-left: 4px solid #38a169;
+}
+
+.expense-section:nth-child(3n) {
+  background: linear-gradient(to bottom right, #fff5f7, #ffffff);
+  border-left: 4px solid #e53e3e;
+}
+
+.expense-section:nth-child(4n) {
+  background: linear-gradient(to bottom right, #faf5ff, #ffffff);
+  border-left: 4px solid #805ad5;
+}
+
+/* Section header color variations */
+.expense-section:nth-child(odd) h2 {
+  color: #2b6cb0;
+  border-bottom: 2px solid #bee3f8;
+}
+
+.expense-section:nth-child(even) h2 {
+  color: #2f855a;
+  border-bottom: 2px solid #c6f6d5;
+}
+
+.expense-section:nth-child(3n) h2 {
+  color: #c53030;
+  border-bottom: 2px solid #fed7d7;
+}
+
+.expense-section:nth-child(4n) h2 {
+  color: #6b46c1;
+  border-bottom: 2px solid #e9d8fd;
+}
+
+/* Table header color variations */
+.expense-section:nth-child(odd) .expense-table th {
+  background: linear-gradient(to bottom, #3182ce, #2b6cb0);
+}
+
+.expense-section:nth-child(even) .expense-table th {
+  background: linear-gradient(to bottom, #38a169, #2f855a);
+}
+
+.expense-section:nth-child(3n) .expense-table th {
+  background: linear-gradient(to bottom, #e53e3e, #c53030);
+}
+
+.expense-section:nth-child(4n) .expense-table th {
+  background: linear-gradient(to bottom, #805ad5, #6b46c1);
+}
+
+/* Responsive adjustments for tables */
+@media (max-width: 768px) {
+  .expense-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .form-header {
+    flex-direction: column;
+  }
+
+  .form-title h1 {
+    text-align: left;
+    margin-top: 15px;
+  }
+}
+
+/* Print styles for medical expense form */
+@media print {
+  .expense-section:nth-child(odd) .expense-table th {
+    background-color: #3182ce !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .expense-section:nth-child(even) .expense-table th {
+    background-color: #38a169 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .expense-section:nth-child(3n) .expense-table th {
+    background-color: #e53e3e !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .expense-section:nth-child(4n) .expense-table th {
+    background-color: #805ad5 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
